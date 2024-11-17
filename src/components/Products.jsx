@@ -1,0 +1,42 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../store/cartSlice';
+
+function Products() {
+    const dispatch = useDispatch();
+    const [products, setProducts] = useState([]);
+
+    // Move handleAdd outside of useEffect
+    const handleAdd = (product) => {
+        dispatch(addToCart(product));
+    };
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            const res = await fetch('https://fakestoreapi.com/products');
+            const data = await res.json();
+            console.log(data);
+            setProducts(data);
+        };
+        fetchProducts();
+    }, []); // Dependency array ensures this runs only once
+
+    return (
+        <div className='productsWrapper'>
+            {products.map((product) => (
+                <div className='card' key={product.id}>
+                    <img src={product.image} alt='Product' />
+                    <h4>{product.title}</h4>
+                    <h5>{product.price}</h5>
+                    <button onClick={() => handleAdd(product)} className='btn'>
+                        Add to cart
+                    </button>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+export default Products;
